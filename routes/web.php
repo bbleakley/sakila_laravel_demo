@@ -24,3 +24,8 @@ Route::get("/films", [FilmController::class, "list"])
 Route::get("/films/{id}", [FilmController::class, "get"])
 	->where(["id" => "[0-9]+"])
 	->name("film");
+
+Route::get("/actors/{id}",function(){
+	return view("home");
+})
+	->name("actor");

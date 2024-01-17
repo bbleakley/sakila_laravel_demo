@@ -12,7 +12,8 @@
 			<table class="table table-striped">
 				<thead>
 					<tr>
-						@foreach( $film[0]["details"] as $h => $_ )
+						<th>Title</th>
+						@foreach( $films[0]["details"] as $h => $_ )
 							<th>{{ $h }}</th>
 						@endforeach
 					</tr>
@@ -21,7 +22,7 @@
 					@foreach( $films as $film )
 						<tr>
 							<td><a href="{{ URL::route('film', $film['film_id']) }}">{{ $film["title"] }}</a></td>
-							@foreach $film["details"] as $_ => $val
+							@foreach( $film["details"] as $_ => $val)
 								<td>{{ $val }}</td>
 							@endforeach
 						</tr>

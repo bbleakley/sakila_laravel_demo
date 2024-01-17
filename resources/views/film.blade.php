@@ -24,8 +24,8 @@
 		<div class="col-md-6">
 			<h2>Starring</h2>
 			<table class="table table-hover">
-				@foreach( $actors as $actor_id => $name )
-					<tr><td><a href="{{ URL::route('actor', $actor_id) }}">{{$name}}</a></td></tr>
+				@foreach( $actors as $actor )
+					<tr><td><a href="{{ URL::route('actor', $actor['id']) }}">{{$actor['name']}}</a></td></tr>
 				@endforeach
 			</table>
 		</h2>

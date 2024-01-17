@@ -12,11 +12,11 @@ class FilmController extends Controller
 		$films = [];
 		foreach( Film::all() as $film ){
 			$films[]= [
-				// keep id separate to use for URL construction
+				// keep id and title separate to use for URL construction
 				"film_id" => $film->film_id
+				,"title" => $film->title
 				,"details" => [
-					"Title" => $film->title
-					,"Release Year" => $film->release_year
+					"Release Year" => $film->release_year
 					,"Rating" => $film->rating
 					,"Run Time" => $film->run_time
 					,"Language" => $film->Language()->name
@@ -59,12 +59,19 @@ class FilmController extends Controller
 			$label = ucfirst(implode(" ",explode("_",$key)));
 			$details[$label] = $film->$key;
 		}
+		$actors = [];
+		foreach( $film->actors as $actor ){
+			$actors[]= [
+				"id" => $actor->actor_id
+				,"name" => ucfirst($actor->first_name) . " " . ucfirst($actor->last_name)
+			];
+		}
 		// return name and description separately as they aren't part of the details table
 		return view("film")->with([
 			"name" => $film->title
 			,"description" => $film->description
 			,"film_details" => $details
-			,"actors" => []
+			,"actors" => $actors
 		]);
 	}
 }

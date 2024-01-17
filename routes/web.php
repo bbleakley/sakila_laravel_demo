@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FilmController;
 use App\Http\Controllers\ActorController;
+use App\Http\Controllers\CustomerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,3 +39,12 @@ Route::get("/actors",[ActorController::class, "list"])
 Route::get("/actors/{id}", [ActorController::class, "get"])
     ->where(["id" => "[0-9]+"])
     ->name("actor");
+
+// Customers
+
+Route::get("/customers",[CustomerController::class, "list"])
+    ->name("customers");
+
+Route::get("/customers/{id}", [CustomerController::class, "get"])
+    ->where(["id" => "[0-9]+"])
+    ->name("customer");

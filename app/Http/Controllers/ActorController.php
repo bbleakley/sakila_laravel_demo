@@ -48,7 +48,7 @@ class ActorController extends Controller
 		foreach( $all as $a ){
 			$actors[]= [
 				"id" => $a->actor_id
-				,"name" => ucfirst($a->first_name) . " " . ucfirst($a->last_name)
+				,"name" => ucwords(strtolower($a->first_name . " " . $a->last_name))
 				,"details" => [
 					"Total Films" => $a->total
 					,"G Films" => $a->g
@@ -74,7 +74,7 @@ class ActorController extends Controller
 				,"id" => $f->film_id
 				,"details" => [
 					"Rating" => $f->rating
-					,"Release Date" => $f->release_date
+					,"Release Date" => $f->release_year
 					,"Category" => $f->category()->name
 					,"Language" => $f->language()->name
 				]

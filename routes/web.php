@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FilmController;
+use App\Http\Controllers\ActorController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,3 +30,6 @@ Route::get("/actors/{id}",function(){
 	return view("home");
 })
 	->name("actor");
+
+Route::get("/actors",[ActorController::class, "list"])
+	->name("actors");

@@ -15,9 +15,13 @@ use App\Http\Controllers\ActorController;
 |
 */
 
+// Home
+
 Route::get('/', function () {
     return view('home');
 });
+
+// Films
 
 Route::get("/films", [FilmController::class, "list"])
 	->name("films");
@@ -26,10 +30,11 @@ Route::get("/films/{id}", [FilmController::class, "get"])
 	->where(["id" => "[0-9]+"])
 	->name("film");
 
-Route::get("/actors/{id}",function(){
-	return view("home");
-})
-	->name("actor");
+// Actors
 
 Route::get("/actors",[ActorController::class, "list"])
 	->name("actors");
+
+Route::get("/actors/{id}", [ActorController::class, "get"])
+    ->where(["id" => "[0-9]+"])
+    ->name("actor");

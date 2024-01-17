@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Actor;
+use App\Models\Film;
 
 class ActorController extends Controller
 {
@@ -60,6 +61,28 @@ class ActorController extends Controller
 		}
 		return view("actors")->with([
 			"actors" => $actors
+		]);
+	}
+
+	public function get($id){
+		$actor = Actor::findOrFail($id);
+		$all_films = $actor->films;
+		$films = [];
+		foreach( $all_films as $f ){
+			$films[]= [
+				"name" => ucwords(strtolower($f->title))
+				,"id" => $f->film_id
+				,"details" => [
+					"Rating" => $f->rating
+					,"Release Date" => $f->release_date
+					,"Category" => $f->category()->name
+					,"Language" => $f->language()->name
+				]
+			];
+		}
+		return view("actor")->with([
+			"name" => ucwords(strtolower($actor->first_name . " " . $actor->last_name))
+			,"films" => $films
 		]);
 	}
 

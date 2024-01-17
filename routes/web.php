@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\FilmController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +17,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('home');
 });
+
+Route::get("/films", [FilmController::class, "list"])
+	->name("films");
+
+Route::get("/films/{id}", [FilmController::class, "get"])
+	->where(["id" => "[0-9]+"])
+	->name("film");

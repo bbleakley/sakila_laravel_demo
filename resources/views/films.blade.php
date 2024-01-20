@@ -9,7 +9,7 @@
 <div class="container">
 	<div class="row">
 		<div class="col-xl-12">
-			<table class="table table-striped">
+			<table id="datatable" class="table table-striped">
 				<thead>
 					<tr>
 						<th>Title</th>

@@ -1,6 +1,7 @@
 @extends("layouts.app")
 @section("title","Films")
 @section("content")
+@vite('resources/js/listView.js')
 <div class="jumbotron">
 	<div class="container">
 		<h1>Films</h1>

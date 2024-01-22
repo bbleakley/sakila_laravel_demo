@@ -9,7 +9,7 @@ export default defineConfig({
 			jQuery: 'jquery',
 		}),
         laravel({
-            input: ['resources/css/app.css', 'resources/js/app.js'],
+            input: ['resources/css/app.css', 'resources/js/app.js', 'resources/js/listView.js'],
             refresh: true,
         }),
     ],

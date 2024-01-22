@@ -21,6 +21,7 @@
 	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css"/>
 
 	@vite('resources/js/app.js')
+	@vite('resources/css/app.css')
 
 </head>
 <body>

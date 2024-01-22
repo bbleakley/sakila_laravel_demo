@@ -4,12 +4,13 @@ class tableUtil{
 	tableBody = this.table.querySelector("tbody");
 	currentPage = 0;
 	pageSelector;
+	pageLengthSelector;
 	pageCount;
 
 	init(){
 		// insert recrods per page select
 		this.table.insertAdjacentHTML("beforebegin",
-		`<p>Show <select id='pageLengthSelect'>
+		`<p>Show <select id='pageLengthSelect' data-value=10>
 				<option value=10>10</option>
 				<option value=20>20</option>
 				<option value=50>50</option>
@@ -17,8 +18,9 @@ class tableUtil{
 		// insert jump to page buttons
 		this.table.insertAdjacentHTML("afterend","<div id='pageSelector' class='d-flex flex-row'></div>");
 		this.pageSelector = document.querySelector("#pageSelector");
+		this.pageLengthSelector = document.querySelector("#pageLengthSelect");
 		this.updateView();
-		this.pageChangeListener();
+		this.listen();
 	}
 
 	updateView(){
@@ -29,7 +31,7 @@ class tableUtil{
 	updateResults(){
 		let rows = this.tableBody.querySelectorAll("tr");
 		let count = rows.length;
-		let pageLength = +document.querySelector("#pageLengthSelect").value;
+		let pageLength = +this.pageLengthSelector.value;
 		this.pageCount = Math.ceil(count / pageLength) - 1;
 		let start = this.currentPage * pageLength;
 		let end = Math.min(start + pageLength, count);
@@ -93,13 +95,30 @@ class tableUtil{
 		})
 	}
 
-	pageChangeListener() {
+	listen(){
+		this.pageChangeListener();
+		this.pageLengthChangeListener();
+	}
+
+	pageChangeListener(){
 		this.pageSelector.addEventListener("click", e => {
 			const btn = e.target.closest(".paginationBtn");
 			if( ! btn ){
 				return;
 			}
 			this.currentPage = +btn.dataset.goto;
+			this.updateView();
+		});
+	}
+
+	pageLengthChangeListener(){
+		this.pageLengthSelector.addEventListener("change", e => {
+			// update the number of rows and keep the first row in the current result set visible
+			let previousLength = +this.pageLengthSelector.dataset.value;
+			let newLength = +this.pageLengthSelector.value;
+			let firstRow = this.currentPage * previousLength;
+			this.currentPage = Math.floor(firstRow / newLength);
+			this.pageLengthSelector.dataset.value = newLength;
 			this.updateView();
 		});
 	}

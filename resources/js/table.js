@@ -60,33 +60,20 @@ class tableUtil{
 		for( let i=0; i <= this.pageCount; i++ ){
 			let active = i == this.currentPage ? 'activePage' : '';
 			if( addStartElipsis ){
-				divs.push(`<div
-						data-goto='0'
-						class='paginationKey paginationBtn p-2 ${active}'
-					>1</div>
-					<div
-						class='paginationKey p-2'
-					>...</div>`);
+				divs.push(this.renderPageDiv(`1`,`paginationBtn ${active}`,"0"));
+				divs.push(this.renderPageDiv(`...`));
 				addStartElipsis = false;
 			}
 			if( i < this.currentPage - 2 && i < this.pageCount - 4 ){
 				continue;
 			}
 			if( i < this.currentPage + 3 || i < 5 ){
-				divs.push(`<div
-					data-goto='${i}'
-					class='paginationKey paginationBtn p-2 ${active}'
-				>${i + 1}</div>`);
+				divs.push(this.renderPageDiv(`${i + 1}`,`paginationBtn ${active}`,`${i}`));
 				continue;
 			}
 			if( addEndElipsis ){
-				divs.push(`<div
-					class='paginationKey p-2'
-				>...</div>
-				<div
-					data-goto='${this.pageCount}'
-					class='paginationKey paginationBtn p-2 ${active}'
-				>${this.pageCount + 1}</div>`);
+				divs.push(this.renderPageDiv(`...`));
+				divs.push(this.renderPageDiv(`${this.pageCount + 1}`,`paginationBtn ${active}`,`${this.pageCount}`));
 				break;
 			}
 		}
@@ -121,6 +108,12 @@ class tableUtil{
 			this.pageLengthSelector.dataset.value = newLength;
 			this.updateView();
 		});
+	}
+
+	renderPageDiv(value, extraClasses="", goto=false ){
+		let gotoString = goto ? `data-goto="${goto}"` : "";
+		let classes = "paginationKey p-2 " + extraClasses;
+		return `<div class='${classes}' ${gotoString}>${value}</div>`;
 	}
 
 }

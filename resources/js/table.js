@@ -20,18 +20,9 @@ class tableUtil{
 		this.table.insertAdjacentHTML("afterend","<div id='pageSelector' class='d-flex flex-row'></div>");
 		this.pageSelector = document.querySelector("#pageSelector");
 		this.pageLengthSelector = document.querySelector("#pageLengthSelect");
-		this.prepTable();
 		// display the default number of rows and trigger listeners
 		this.updateView();
 		this.listen();
-	}
-
-	prepTable(){
-		let i = 0;
-		this.tableHead.querySelectorAll("th").forEach( c => {
-			c.dataset.index = i;
-			i++;
-		});
 	}
 
 	updateView(){
@@ -151,7 +142,8 @@ class tableUtil{
 		// sort when a column header is clicked
 		this.table.querySelector("thead").addEventListener("click", e =>{
 			let col = e.target.closest("th");
-			let index = +col.dataset.index;
+			let index = Array.from(col.parentNode.children).indexOf(col);
+			// set sort to desc unless the column is already desc sorted
 			let sort = "descTableSort";
 			let img = '<svg class="sortIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M182.6 470.6c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-9.2-9.2-11.9-22.9-6.9-34.9s16.6-19.8 29.6-19.8H288c12.9 0 24.6 7.8 29.6 19.8s2.2 25.7-6.9 34.9l-128 128z"/></svg>';
 			if( col.classList.contains(sort) ){
@@ -163,6 +155,7 @@ class tableUtil{
 			if( existingIcon = this.tableHead.querySelector(".sortIcon") ){
 				existingIcon.remove();
 			}
+			// insert sort icon
 			col.insertAdjacentHTML("beforeend",img);
 			// remove any previously applied sort classes
 			if( ascSorted = this.tableHead.querySelector(".ascTableSort") ){

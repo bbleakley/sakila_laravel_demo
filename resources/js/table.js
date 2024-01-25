@@ -4,6 +4,7 @@ class tableUtil{
 	tableBody = this.table.querySelector("tbody");
 	tableHead = this.table.querySelector("thead");
 	currentPage = 0;
+	searchBlacklist = [];
 	pageSelector;
 	pageLengthSelector;
 	pageCount;
@@ -25,6 +26,8 @@ class tableUtil{
 				</div>
 			</div>
 		</div>`);
+		// check configurations
+		this.checkConfigurations();
 		// insert jump to page buttons container
 		this.table.insertAdjacentHTML("afterend","<div id='pageSelector' class='d-flex flex-row'></div>");
 		this.pageSelector = document.querySelector("#pageSelector");
@@ -33,6 +36,15 @@ class tableUtil{
 		// display the default number of rows and trigger listeners
 		this.updateView();
 		this.listen();
+	}
+
+	checkConfigurations(){
+		// identify the indexes of non-searchable columns
+		this.tableHead.querySelectorAll("th").forEach((h, i) => {
+			if( h.dataset.searchable === "false" ){
+				this.searchBlacklist.push(i);
+			}
+		});
 	}
 
 	updateView(){
@@ -202,18 +214,20 @@ class tableUtil{
 			let query = this.searchBar.value.toUpperCase();
 			Array.from(this.tableBody.children).forEach( r =>{
 				let match = false;
-				Array.from(r.children).forEach( c => {
+				Array.from(r.children).forEach( (c, i) => {
+					// don't search blacklisted columns
+					if( this.searchBlacklist.includes(i) ){
+						return;
+					}
 					if( c.textContent.toUpperCase().includes(query) ){
 						match = true;
 						return;
 					}
 				});
 				if( match ){
-					r.classList.remove("queryFiltered");
-					r.classList.remove("d-none");
+					r.classList.remove("queryFiltered","d-none");
 				}else{
-					r.classList.add("queryFiltered");
-					r.classList.add("d-none");
+					r.classList.add("queryFiltered","d-none");
 				}
 			})
 			this.currentPage = 0;

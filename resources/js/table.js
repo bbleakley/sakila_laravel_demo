@@ -84,10 +84,10 @@ class tableUtil{
 		// loop through every potential pagination button
 		for( let i=0; i <= this.pageCount; i++ ){
 			// add a class if the button references the current page
-			let active = i == this.currentPage ? 'activePage' : '';
+			let colorClass = i == this.currentPage ? 'bg-info' : 'bg-light paginationBtn';
 			// if we need a start ellipsis, show the button for the first page and then the ellipsis
 			if( addStartEllipsis ){
-				divs.push(this.renderPageDiv(`1`,`paginationBtn ${active}`,"0"));
+				divs.push(this.renderPageDiv(`1`,colorClass,"0"));
 				// the ellipsis doesn't have the paginationBtn class because it's not a button
 				divs.push(this.renderPageDiv(`...`));
 				addStartEllipsis = false;
@@ -99,14 +99,14 @@ class tableUtil{
 			}
 			// add a button for pages close to the current page
 			if( i < this.currentPage + 3 || i < 5 ){
-				divs.push(this.renderPageDiv(`${i + 1}`,`paginationBtn ${active}`,`${i}`));
+				divs.push(this.renderPageDiv(`${i + 1}`,colorClass,`${i}`));
 				continue;
 			}
 			// after adding the buttons for pages close to the current page, add an ellipsis and a link to the last page and break out of the loop
 			// if the current page is close to the end, this code won't execute and the last few page buttons will all be visible
 			if( addEndEllipsis ){
 				divs.push(this.renderPageDiv(`...`));
-				divs.push(this.renderPageDiv(`${this.pageCount + 1}`,`paginationBtn ${active}`,`${this.pageCount}`));
+				divs.push(this.renderPageDiv(`${this.pageCount + 1}`,colorClass,`${this.pageCount}`));
 				break;
 			}
 		}
@@ -159,10 +159,10 @@ class tableUtil{
 			let index = Array.from(col.parentNode.children).indexOf(col);
 			// set sort to desc unless the column is already desc sorted
 			let sort = "descTableSort";
-			let img = '<svg class="sortIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M182.6 470.6c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-9.2-9.2-11.9-22.9-6.9-34.9s16.6-19.8 29.6-19.8H288c12.9 0 24.6 7.8 29.6 19.8s2.2 25.7-6.9 34.9l-128 128z"/></svg>';
+			let img = '<i class="mx-1 sortIcon bi bi-sort-down"></i>';
 			if( col.classList.contains(sort) ){
 				sort = "ascTableSort";
-				img = '<svg class="sortIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M182.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8H288c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z"/></svg>';
+				img = '<i class="mx-1 sortIcon bi bi-sort-up"></i>'
 			}
 			// remove existing icon and add new one
 			let existingIcon, descSorted, ascSorted;
@@ -210,8 +210,10 @@ class tableUtil{
 				});
 				if( match ){
 					r.classList.remove("queryFiltered");
+					r.classList.remove("d-none");
 				}else{
 					r.classList.add("queryFiltered");
+					r.classList.add("d-none");
 				}
 			})
 			this.currentPage = 0;
@@ -222,7 +224,7 @@ class tableUtil{
 	renderPageDiv(value, extraClasses="", goto=false ){
 		// utility function to create pagination divs
 		let gotoString = goto ? `data-goto="${goto}"` : "";
-		let classes = "paginationKey p-2 " + extraClasses;
+		let classes = "paginationKey p-2 rounded " + extraClasses;
 		return `<div class='${classes}' ${gotoString}>${value}</div>`;
 	}
 

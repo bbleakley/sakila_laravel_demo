@@ -11,3 +11,8 @@
 .activePage{
 	background-color: #5F9EA0 !important;
 }
+
+.sortIcon{
+	height: 20px;
+	width: 20px;
+}

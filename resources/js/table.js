@@ -9,17 +9,27 @@ class tableUtil{
 	pageCount;
 
 	init(){
-		// insert records per page select
+		// insert records per page select and search bar
 		this.table.insertAdjacentHTML("beforebegin",
-		`<p>Show <select id='pageLengthSelect' data-value=10>
-				<option value=10>10</option>
-				<option value=20>20</option>
-				<option value=50>50</option>
-			</select> records</p>`);
+		`<div class="container pt-4 pb-2">
+			<div class="row">
+				<div class="col-md-6">
+					<p class="my-auto">Show <select id='pageLengthSelect' data-value=10>
+						<option value=10>10</option>
+						<option value=20>20</option>
+						<option value=50>50</option>
+					</select> records</p>
+				</div>
+				<div class="col-md-6 d-flex flex-row-reverse">
+					<input class="searchInput rounded" type="text" placeholder="Search..."></input>
+				</div>
+			</div>
+		</div>`);
 		// insert jump to page buttons container
 		this.table.insertAdjacentHTML("afterend","<div id='pageSelector' class='d-flex flex-row'></div>");
 		this.pageSelector = document.querySelector("#pageSelector");
 		this.pageLengthSelector = document.querySelector("#pageLengthSelect");
+		this.searchBar = document.querySelector(".searchInput");
 		// display the default number of rows and trigger listeners
 		this.updateView();
 		this.listen();
@@ -34,7 +44,9 @@ class tableUtil{
 
 	updateResults(){
 		// update visible rows after any change request from the user
-		let rows = this.tableBody.querySelectorAll("tr");
+		let rows = Array.from(this.tableBody.children).filter(r => {
+			return ! r.classList.contains("queryFiltered");
+		});
 		let count = rows.length;
 		let pageLength = +this.pageLengthSelector.value;
 		this.pageCount = Math.ceil(count / pageLength) - 1;
@@ -111,6 +123,8 @@ class tableUtil{
 		this.pageLengthChangeListener();
 		// changes to the sort order
 		this.sortListener();
+		// listen for search queries
+		this.searchListener();
 	}
 
 	pageChangeListener(){
@@ -167,7 +181,7 @@ class tableUtil{
 			col.classList.add(sort);
 			// sort rows
 			Array.from(this.tableBody.querySelectorAll('tr'))
-			    .sort((a, b) => {
+				.sort((a, b) => {
 					let val1 = a.children[index].textContent;
 					let val2 = b.children[index].textContent;
 					let sortModifier = sort == "ascTableSort" ? 1 : -1;
@@ -177,7 +191,29 @@ class tableUtil{
 					}
 					return val1.toString().localeCompare(val2) * sortModifier;
 				})
-    			.forEach(tr => this.tableBody.appendChild(tr) );
+				.forEach(tr => this.tableBody.appendChild(tr) );
+			this.currentPage = 0;
+			this.updateView();
+		})
+	}
+
+	searchListener(){
+		this.searchBar.addEventListener("input", e =>{
+			let query = this.searchBar.value.toUpperCase();
+			Array.from(this.tableBody.children).forEach( r =>{
+				let match = false;
+				Array.from(r.children).forEach( c => {
+					if( c.textContent.toUpperCase().includes(query) ){
+						match = true;
+						return;
+					}
+				});
+				if( match ){
+					r.classList.remove("queryFiltered");
+				}else{
+					r.classList.add("queryFiltered");
+				}
+			})
 			this.currentPage = 0;
 			this.updateView();
 		})

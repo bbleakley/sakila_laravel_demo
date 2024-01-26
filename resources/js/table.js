@@ -169,12 +169,13 @@ class tableUtil{
 		this.table.querySelector("thead").addEventListener("click", e =>{
 			let col = e.target.closest("th");
 			let index = Array.from(col.parentNode.children).indexOf(col);
-			// set sort to desc unless the column is already desc sorted
-			let sort = "descTableSort";
-			let img = '<i class="mx-1 sortIcon bi bi-sort-down"></i>';
-			if( col.classList.contains(sort) ){
-				sort = "ascTableSort";
-				img = '<i class="mx-1 sortIcon bi bi-sort-up"></i>'
+			// default the sort to asc
+			let sort = "ascTableSort";
+			let img = '<i class="mx-1 sortIcon bi bi-sort-up"></i>';
+			// if the column is already sorted asc or if the default sort is set to desc, sort desc
+			if( col.classList.contains("ascTableSort") || col.dataset.sort == "desc" ){
+				sort = "descTableSort";
+				img = '<i class="mx-1 sortIcon bi bi-sort-down"></i>';
 			}
 			// remove existing icon and add new one
 			let existingIcon, descSorted, ascSorted;

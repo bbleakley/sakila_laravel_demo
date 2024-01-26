@@ -15,8 +15,10 @@
 					<tr>
 						<th>Title</th>
 						@foreach( $films[0]["details"] as $h => $_ )
-							@if( in_array($h, ["Release Year", "Run Time", "Language"]) )
+							@if( in_array($h, ["Release Year", "Language"]) )
 								<th data-searchable="false">{{ $h }}</th>
+							@elseif( $h === "Run Time" )
+								<th data-searchable="false" data-sort="desc">{{ $h }}</th>
 							@else
 								<th>{{ $h }}</th>
 							@endif

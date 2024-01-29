@@ -154,7 +154,6 @@ class tableUtil{
 
 	addFilterConfig(){
 		let options = "";
-		console.log(this.filterable);
 		this.filterable.forEach( filter => {
 			options = options + `<option value=${filter.index}>${filter.label}</option>`;
 		});
@@ -184,6 +183,8 @@ class tableUtil{
 		this.sortListener();
 		// listen for search queries
 		this.searchListener();
+		// listen for filter updates
+		this.filterListener();
 	}
 
 	pageChangeListener(){
@@ -259,9 +260,52 @@ class tableUtil{
 
 	searchListener(){
 		this.searchBar.addEventListener("input", e =>{
-			let query = this.searchBar.value.toUpperCase();
-			Array.from(this.tableBody.children).forEach( r =>{
-				let match = false;
+			this.searchAndFilter();
+		})
+	}
+
+	filterListener(){
+		this.filter.addEventListener("input", e =>{
+			this.searchAndFilter();
+		})
+	}
+
+	searchAndFilter(){
+		// check if filter is configured
+		let filter = false;
+		let filterColumn, filterCompare, filterVal;
+		if( this.filterable ){
+			filterColumn = +this.filter.querySelector(".filterColumn").value;
+			filterCompare = this.filter.querySelector(".filterCompare").value;
+			filterVal = this.filter.querySelector(".filterValue").value.toUpperCase();  
+			if( ! isNaN(filterColumn) && filterCompare && filterVal ){
+				filter = true;
+			}
+		}
+		let query = this.searchBar.value.toUpperCase();
+		// check each row to see if it matches the filter
+		Array.from(this.tableBody.children).forEach( r =>{
+			let match;
+			if( filter ){
+				let value = r.children[filterColumn].textContent.toUpperCase();
+				switch( filterCompare ){
+					case "equals":
+						match = value === filterVal;
+						break;
+					case "notEqual":
+						match = value !== filterVal;
+						break;
+					case "contains":
+						match = value.includes(filterVal);
+						break;
+					case "notContains":
+						match = ! value.includes(filterVal);
+						break;
+				}
+			}
+			// if it isn't omitted by the filter, check for search matches
+			if( match !== false ){
+				match = false;
 				Array.from(r.children).forEach( (c, i) => {
 					// don't search blacklisted columns
 					if( this.searchBlacklist.includes(i) ){
@@ -272,15 +316,16 @@ class tableUtil{
 						return;
 					}
 				});
-				if( match ){
-					r.classList.remove("queryFiltered","d-none");
-				}else{
-					r.classList.add("queryFiltered","d-none");
-				}
-			})
-			this.currentPage = 0;
-			this.updateView();
-		})
+			}
+			if( match ){
+				r.classList.remove("queryFiltered","d-none");
+			}else{
+				r.classList.add("queryFiltered","d-none");
+			}
+		});
+		// update view
+		this.currentPage = 0;
+		this.updateView();
 	}
 
 	renderPageDiv(value, extraClasses="", goto=false ){

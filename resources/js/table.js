@@ -5,12 +5,17 @@ class tableUtil{
 	tableHead = this.table.querySelector("thead");
 	currentPage = 0;
 	searchBlacklist = [];
+	filterable = [];
+	filter;
 	pageSelector;
 	pageLengthSelector;
 	pageCount;
 
 	init(){
+		// check configurations
+		this.checkConfigurations();
 		// insert records per page select and search bar
+		this.setupFilter();
 		this.table.insertAdjacentHTML("beforebegin",
 		`<div class="container pt-4 pb-2">
 			<div class="row">
@@ -26,8 +31,6 @@ class tableUtil{
 				</div>
 			</div>
 		</div>`);
-		// check configurations
-		this.checkConfigurations();
 		// insert jump to page buttons container
 		this.table.insertAdjacentHTML("afterend","<div id='pageSelector' class='d-flex flex-row'></div>");
 		this.pageSelector = document.querySelector("#pageSelector");
@@ -39,10 +42,14 @@ class tableUtil{
 	}
 
 	checkConfigurations(){
-		// identify the indexes of non-searchable columns
 		this.tableHead.querySelectorAll("th").forEach((h, i) => {
+			// identify the indexes of non-searchable columns
 			if( h.dataset.searchable === "false" ){
 				this.searchBlacklist.push(i);
+			}
+			// identify columns that can be filtered
+			if( h.dataset.filterable === "true" ){
+				this.filterable.push({index:i, label:h.textContent});
 			}
 		});
 	}
@@ -126,6 +133,46 @@ class tableUtil{
 		divs.forEach( div => {
 			this.pageSelector.insertAdjacentHTML("beforeend",div);
 		})
+	}
+
+	setupFilter(){
+		// bail if none of the columns are filterable.
+		if( ! this.filterable ){
+			return;
+		}
+		let div = `<div class="row">
+			<div class="col-sm-3 p-2">
+				<h5 class="align-middle text-center">Filter</h5>
+			</div>
+			<div class="filterContainer col-md-6 p-2">
+			</div>
+		</div>`;
+		this.table.insertAdjacentHTML("beforebegin",div);
+		this.filter = document.querySelector(".filterContainer");
+		this.addFilterConfig();
+	}
+
+	addFilterConfig(){
+		let options = "";
+		console.log(this.filterable);
+		this.filterable.forEach( filter => {
+			options = options + `<option value=${filter.index}>${filter.label}</option>`;
+		});
+		let filterRow = `<div class="filterConfig d-flex flex-row">
+			<button type="button" class="btn-close" aria-label="Close"></button>
+			<select class="filterColumn mx-auto">
+				<option>Select a Column</option>
+				${options}
+			</select>
+			<select class="filterCompare mx-auto">
+				<option value="equals">Equals</option>
+				<option value="notEqual">Does not Equal</option>
+				<option value="contains">Contains</option>
+				<option value="notContains">Does not Contain</option>
+			</select>
+			<input class="filterValue mx-auto"></input>
+		</div>`;
+		this.filter.insertAdjacentHTML("beforeend",filterRow);
 	}
 
 	listen(){

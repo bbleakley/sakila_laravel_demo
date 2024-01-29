@@ -19,6 +19,8 @@
 								<th data-searchable="false">{{ $h }}</th>
 							@elseif( $h === "Run Time" )
 								<th data-searchable="false" data-sort="desc">{{ $h }}</th>
+							@elseif( $h === "Rating" )
+								<th data-filterable="true">{{ $h }}</th>
 							@else
 								<th>{{ $h }}</th>
 							@endif

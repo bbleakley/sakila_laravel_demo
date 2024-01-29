@@ -265,7 +265,15 @@ class tableUtil{
 	}
 
 	filterListener(){
+		// listen for changes to the filter
 		this.filter.addEventListener("input", e =>{
+			this.searchAndFilter();
+		});
+		// listen for the close button
+		this.filter.querySelector(".btn-close").addEventListener("click", e=>{
+			e.target.parentNode.remove();
+			this.addFilterConfig();
+			// refresh results to undo previous filter
 			this.searchAndFilter();
 		})
 	}

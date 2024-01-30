@@ -141,8 +141,8 @@ class tableUtil{
 			return;
 		}
 		let div = `<div class="row">
-			<div class="col-sm-3 p-2">
-				<h5 class="align-middle text-center">Filter</h5>
+			<div class="col-sm-3 text-center justify-content-center align-self-center">
+					<h5>Filter</h5>
 			</div>
 			<div class="filterContainer col-md-6 p-2">
 			</div>
@@ -157,10 +157,11 @@ class tableUtil{
 		this.filterable.forEach( filter => {
 			options = options + `<option value=${filter.index}>${filter.label}</option>`;
 		});
-		let filterRow = `<div class="filterConfig d-flex flex-row">
-			<button type="button" class="btn-close" aria-label="Close"></button>
+		let filterRow = `<div class="filterConfig d-flex flex-row border rounded p-2">
+			<button type="button" class="btnAddFilter filterBtn p-0 border-0 mx-1">[ + ]</button>
+			<button type="button" class="btnRemoveFilter filterBtn p-0 border-0 mx-1">[ - ]</button>
 			<select class="filterColumn mx-auto">
-				<option>Select a Column</option>
+				<option disabled selected>Select a Column</option>
 				${options}
 			</select>
 			<select class="filterCompare mx-auto">
@@ -269,48 +270,79 @@ class tableUtil{
 		this.filter.addEventListener("input", e =>{
 			this.searchAndFilter();
 		});
-		// listen for the close button
-		this.filter.querySelector(".btn-close").addEventListener("click", e=>{
-			e.target.parentNode.remove();
-			this.addFilterConfig();
-			// refresh results to undo previous filter
-			this.searchAndFilter();
+		// listen for add/remove button clicks
+		this.filter.addEventListener("click", e=>{
+			let target = e.target;
+			// change focus to button if icon was clicked
+			if( target.classList.contains("bi") ){
+				target = target.parentNode;
+			}
+			// bail if the click wasn't on a button
+			if( ! target.classList.contains("filterBtn") ){
+				return;
+			}
+			// add a config filter if add button is pressed
+			if( target.classList.contains("btnAddFilter") ){
+				this.addFilterConfig();
+			}
+			// remove the config filter if remove button is pressed
+			if( target.classList.contains("btnRemoveFilter") ){
+				e.target.closest(".filterConfig").remove();
+				// add a new filter if removed filter was the only one
+				if( ! this.filter.children ){
+					this.addFilterConfig();
+				}
+				// update results in case the removed filter had impacted the result set
+				this.searchAndFilter();
+			}
 		})
 	}
 
 	searchAndFilter(){
 		// check if filter is configured
-		let filter = false;
+		let filter = [];
 		let filterColumn, filterCompare, filterVal;
 		if( this.filterable ){
-			filterColumn = +this.filter.querySelector(".filterColumn").value;
-			filterCompare = this.filter.querySelector(".filterCompare").value;
-			filterVal = this.filter.querySelector(".filterValue").value.toUpperCase();  
-			if( ! isNaN(filterColumn) && filterCompare && filterVal ){
-				filter = true;
-			}
+			// add each full defined filter config to the filter array
+			this.filter.querySelectorAll(".filterConfig").forEach( c =>{
+				filterColumn = +c.querySelector(".filterColumn").value;
+				filterCompare = c.querySelector(".filterCompare").value;
+				filterVal = c.querySelector(".filterValue").value.toUpperCase();  
+				if( ! isNaN(filterColumn) && filterCompare && filterVal ){
+					filter.push({
+						filterColumn: filterColumn
+						,filterCompare: filterCompare
+						,filterVal: filterVal
+					});
+				}
+			});
 		}
 		let query = this.searchBar.value.toUpperCase();
 		// check each row to see if it matches the filter
 		Array.from(this.tableBody.children).forEach( r =>{
 			let match;
-			if( filter ){
-				let value = r.children[filterColumn].textContent.toUpperCase();
-				switch( filterCompare ){
+			filter.forEach( f => {
+				// bail if a previous filter didn't match
+				if( match === false ){
+					return;
+				}
+				// compare filter value
+				let value = r.children[f.filterColumn].textContent.toUpperCase();
+				switch( f.filterCompare ){
 					case "equals":
-						match = value === filterVal;
+						match = value === f.filterVal;
 						break;
 					case "notEqual":
-						match = value !== filterVal;
+						match = value !== f.filterVal;
 						break;
 					case "contains":
-						match = value.includes(filterVal);
+						match = value.includes(f.filterVal);
 						break;
 					case "notContains":
-						match = ! value.includes(filterVal);
+						match = ! value.includes(f.filterVal);
 						break;
 				}
-			}
+			});
 			// if it isn't omitted by the filter, check for search matches
 			if( match !== false ){
 				match = false;

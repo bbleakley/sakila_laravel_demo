@@ -10,6 +10,7 @@ class tableUtil{
 	pageSelector;
 	pageLengthSelector;
 	pageCount;
+	striped;
 
 	init(){
 		// check configurations
@@ -52,6 +53,9 @@ class tableUtil{
 				this.filterable.push({index:i, label:h.textContent});
 			}
 		});
+		if( this.table.dataset.striped === "true" ){
+			this.striped = true;
+		}
 	}
 
 	updateView(){
@@ -80,6 +84,15 @@ class tableUtil{
 				// show any rows within the desired result set
 				rows[i].classList.remove("d-none");
 			}
+		}
+		if( this.striped ){
+			this.tableBody.querySelectorAll("tr:not(.d-none)").forEach((r, i) => {
+				if( i % 2 ){
+					Array.from(r.children).forEach( d => { d.classList.add("bg-light") });
+				}else{
+					Array.from(r.children).forEach( d => { d.classList.remove("bg-light") });
+				}
+			});
 		}
 	}
 

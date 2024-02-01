@@ -10,7 +10,7 @@
 <div class="container">
 	<div class="row">
 		<div class="col-xl-12">
-			<table id="datatable" class="table table-striped">
+			<table id="datatable" class="table" data-striped="true">
 				<thead>
 					<tr>
 						<th>Title</th>

@@ -16,7 +16,6 @@ class tableUtil{
 		// check configurations
 		this.checkConfigurations();
 		// insert records per page select and search bar
-		this.setupFilter();
 		this.table.insertAdjacentHTML("beforebegin",
 		`<div class="container pt-4 pb-2">
 			<div class="row">
@@ -32,6 +31,7 @@ class tableUtil{
 				</div>
 			</div>
 		</div>`);
+		this.setupFilter();
 		// insert jump to page buttons container
 		this.table.insertAdjacentHTML("afterend","<div id='pageSelector' class='d-flex flex-row'></div>");
 		this.pageSelector = document.querySelector("#pageSelector");
@@ -53,6 +53,7 @@ class tableUtil{
 				this.filterable.push({index:i, label:h.textContent});
 			}
 		});
+		// alternate row background colors
 		if( this.table.dataset.striped === "true" ){
 			this.striped = true;
 		}
@@ -85,6 +86,7 @@ class tableUtil{
 				rows[i].classList.remove("d-none");
 			}
 		}
+		// .table-striped doesn't update on filter so optionally handle it here
 		if( this.striped ){
 			this.tableBody.querySelectorAll("tr:not(.d-none)").forEach((r, i) => {
 				if( i % 2 ){
@@ -154,9 +156,7 @@ class tableUtil{
 			return;
 		}
 		let div = `<div class="row">
-			<div class="col-sm-3 text-center justify-content-center align-self-center">
-					<h5>Filter</h5>
-			</div>
+			<div class="col-sm-3"></div>
 			<div class="filterContainer col-md-6 p-2">
 			</div>
 		</div>`;

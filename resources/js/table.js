@@ -53,6 +53,9 @@ class tableUtil{
 				this.filterable.push({index:i, label:h.textContent});
 			}
 		});
+		if( ! this.filterable.length ){
+			this.filterable = false;
+		}
 		// alternate row background colors
 		if( this.table.dataset.striped === "true" ){
 			this.striped = true;
@@ -198,7 +201,9 @@ class tableUtil{
 		// listen for search queries
 		this.searchListener();
 		// listen for filter updates
-		this.filterListener();
+		if( this.filterable ){
+			this.filterListener();
+		}
 	}
 
 	pageChangeListener(){

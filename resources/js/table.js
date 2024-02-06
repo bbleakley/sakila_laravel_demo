@@ -240,7 +240,13 @@ class tableUtil{
 			let sort = "ascTableSort";
 			let img = '<i class="mx-1 sortIcon bi bi-sort-up"></i>';
 			// if the column is already sorted asc or if the default sort is set to desc, sort desc
-			if( col.classList.contains("ascTableSort") || col.dataset.sort == "desc" ){
+			if(
+				col.classList.contains("ascTableSort")
+				|| (
+					col.dataset.sort == "desc"
+					&& ! col.classList.contains("descTableSort")
+				)
+			){
 				sort = "descTableSort";
 				img = '<i class="mx-1 sortIcon bi bi-sort-down"></i>';
 			}
